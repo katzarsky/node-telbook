@@ -1,0 +1,26 @@
+{
+  "name": "tu-telbook",
+  "version": "1.0.0",
+  "description": "Simple AJAX/JSON telbook web app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/katzarsky/node-telbook.git"
+  },
+  "keywords": [
+    "node",
+    "ajax",
+    "tu",
+    "plovdiv",
+    "telbook"
+  ],
+  "author": "Boian Katzarsky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/katzarsky/node-telbook/issues"
+  },
+  "homepage": "https://github.com/katzarsky/node-telbook#readme"
+}
