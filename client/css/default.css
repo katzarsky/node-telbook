@@ -6,6 +6,9 @@ html, body {
 	font-weight: normal;
 	background: #ffffff;
 }
+* {
+	box-sizing: border-box;
+}
 body {
 	margin: 1em;
 }
@@ -81,7 +84,10 @@ table.grid tr,
 table.grid td {
 	background: #fff;
 }
-table.grid tr:hover td{
+table.grid tr:hover td {
+	background: #def !important;
+}
+table.grid tr.selected td {
 	background: #cde !important;
 }
 table.grid th, 
@@ -128,10 +134,19 @@ select,
 textarea, 
 .customfile {
     background: #fff;
-    border-radius: 0;
     border-width: 1px;
     box-shadow: 1px 3px 4px #ddd inset;
     padding: 2px;
+    margin: 0;
+    border-radius: 0;
+	border: 1px solid #999;
+    
+}
+
+input:read-only {
+	background: #ccc;
+	box-shadow: none;
+	border-color: transparent;
 }
 
 button {

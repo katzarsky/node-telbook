@@ -20,9 +20,9 @@ app.use(parser.urlencoded({ extended: true })); // for parsing
 // controllers
 app.get('/persons', function(request, response) {
 	var messages = [];
-	db.query('SELECT * FROM PERSONS_TBL', function(error, results) {
+	db.query('SELECT * FROM PERSONS_TBL ORDER BY NAME', function(error, results) {
 		if(error) {
-			response.status(500);
+			//response.status(500);
 			messages.push({ type: 'error', text: 'SQL ERROR: ' + error});
 			response.json({ messages: messages });
 		}
@@ -38,7 +38,7 @@ app.get('/persons/:person_id', function(request, response) {
 	var messages = [];
 	db.query('SELECT * FROM PERSONS_TBL WHERE ID=?', [person_id], function(error, persons) {
 		if(error) {
-			response.status(500);
+			//response.status(500);
 			messages.push({ type: 'error', text: 'SQL ERROR: ' + error});
 			response.json({ messages: messages });
 		}
@@ -117,7 +117,7 @@ app.delete('/persons/:person_id', function(request, response) {
 	);
 });
 
-app.get('/telephones/person/:person_id', function(request, response) {
+app.get('/persons/:person_id/telephones', function(request, response) {
 	var person_id = request.params.person_id;
 	db.query(
 		"SELECT * FROM PERSONS_TBL WHERE ID = ?", 
@@ -143,43 +143,10 @@ app.get('/telephones/person/:person_id', function(request, response) {
 });
 
 app.get('/teltypes', function(request, response) {
-	function xxx(rows) {
-		x++;
-		console.log(x, rows);	
-	}
-	var x = 0;
-	
-	db.query("SELECT * FROM PERSONS_TBL ORDER BY FAM", function(error, rows) {
-		xxx(rows);
-	});
 	db.query("SELECT * FROM TELTYPES_TBL", function(error, rows) {
-		xxx(rows);
 		response.json({ teltypes: rows });
 		response.end();
 	});
-	console.log(x);
-});
-
-app.delete('/persons/:person_id', function(request, response) {
-	var person_id = parseInt(request.params.person_id);
-	var messages = [];
-	
-	db.query(
-		"DELETE FROM PERSONS_TBL WHERE ID = ?", 
-		[person_id], 
-		function(error, result) {
-			if(error) {
-				messages.push({type: 'error', text: 'SQL ERROR: ' + error});
-				messages.push({type: 'error', text: 'Person not deleted.'});
-				//response.status(500);
-			}
-			else {
-				messages.push({type: 'info', text: 'Person deleted.'});
-			}
-			response.json({ messages: messages });
-			response.end();
-		}
-	);
 });
 
 app.delete('/telephones/:telephone_id', function(request, response) {
@@ -203,6 +170,66 @@ app.delete('/telephones/:telephone_id', function(request, response) {
 		}
 	);
 });
+
+app.get('/telephones/:telephone_id', function(request, response) {
+	var telephone_id = parseInt(request.params.telephone_id);
+	var messages = [];
+	db.query('SELECT * FROM TELS_TBL WHERE ID=?', [telephone_id], function(error, telephones) {
+		if(error) {
+			//response.status(500);
+			messages.push({ type: 'error', text: 'SQL ERROR: ' + error});
+			response.json({ messages: messages });
+		}
+		else {
+			response.json({ telephone: telephones[0] });
+		}
+		response.end();
+	});
+});
+
+app.post(['/telephones/:telephone_id', '/telephones'], function(request, response) {
+	var telephone_id = parseInt(request.params.telephone_id);
+	var telephone = request.body;
+	var messages = [];
+	
+	if(telephone.NOMER.length < 1) messages.push({type: 'error', text: 'NOMER is empty.'});
+	if(parseInt(telephone.TID.length) < 1) messages.push({type: 'error', text: 'TELTYPE is empty.'});
+
+	if(messages.length > 0) {
+		messages.push({type: 'error', text: 'Telephone not saved.'});
+		//response.status(400);
+		response.json({ messages: messages });
+		response.end();
+	}
+	else {
+		
+		var onUpdateTelephone = function(error, results) {
+			if(error) {
+				messages.push({type: 'error', text: 'SQL ERROR: ' + error});
+				messages.push({type: 'error', text: 'Telephone not saved.'});
+				//response.status(500);
+				response.json({ messages: messages });
+				response.end();
+			}
+			else {
+				messages.push({type: 'info', text: 'Telephone saved.'});
+				if(results.insertId) telephone_id = results.insertId;
+				db.query('SELECT * FROM TELS_TBL WHERE ID = ?', [telephone_id], function(error, results){
+					response.json({ telephone: results[0], messages: messages });
+					response.end();
+				});
+			}
+		};
+		
+		if(telephone_id > 0) {
+			db.query('UPDATE TELS_TBL SET NOMER=?, TID=? WHERE ID=?', [telephone.NOMER, telephone.TID, telephone_id], onUpdateTelephone);
+		}
+		else {
+			db.query('INSERT INTO TELS_TBL SET NOMER=?, TID=?, PID=?', [telephone.NOMER, telephone.TID, telephone.PID], onUpdateTelephone);
+		}
+	}
+});
+
 
 // set-up static files and index.html
 //app.use(express.static('client'));
