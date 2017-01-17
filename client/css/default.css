@@ -100,7 +100,7 @@ td.panel {
 	background: #eee;
 	padding: 0.5em 1em;
 	min-width:300px;
-	min-height:50px;
+	min-height:150px;
 	vertical-align: top;
 }
 td.panel:hover {
