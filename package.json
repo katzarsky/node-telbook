@@ -2,8 +2,9 @@
   "name": "tu-telbook",
   "version": "1.0.0",
   "description": "Simple AJAX/JSON telbook web app",
-  "main": "index.js",
+  "main": "server/server.js",
   "scripts": {
+    "start": "node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,7 +25,9 @@
   },
   "homepage": "https://github.com/katzarsky/node-telbook#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "mime": "^1.3.4",
     "mysql": "^2.12.0"
   }
 }
