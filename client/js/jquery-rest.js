@@ -12,13 +12,12 @@ $.delete = function (url, data, callback, type) {
 	});
 };
 
-$.postJSON = function (url, data, callback) {
+$.postJSON = function (url, data) {
 	return $.ajax({
 		url: url,
 		type : 'POST',
 		data : JSON.stringify(data),
-		contentType : 'application/json',	
-		success: callback
+		contentType : 'application/json'
 	});
 };
 
