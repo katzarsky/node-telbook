@@ -1,7 +1,7 @@
 {
   "name": "node-telbook",
   "version": "1.0.0",
-  "description": "Simple AJAX/JSON telbook web app",
+  "description": "Simple telbook web app (node/ajax)",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
