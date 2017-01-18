@@ -15,7 +15,7 @@ var app = express();
 
 // for parsing `application/json` and `application/x-www-form-urlencoded`
 app.use(parser.json()); 
-app.use(parser.urlencoded({ extended: true })); // for parsing 
+app.use(parser.urlencoded({ extended: true }));
 
 // controllers
 app.get('/persons', function(request, response) {
@@ -164,7 +164,7 @@ app.get('/telephones/:telephone_id', function(request, response) {
 	var messages = [];
 	db.query('SELECT * FROM TELS_TBL WHERE ID=?', [telephone_id], function(error, telephones) {
 		if(error) {
-			//response.status(500);
+			response.status(500);
 			messages.push({ type: 'error', text: 'SQL ERROR: ' + error});
 			response.json({ messages: messages });
 		}
