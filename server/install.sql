@@ -10,10 +10,10 @@ CREATE TABLE IF NOT EXISTS `PERSONS_TBL` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 INSERT INTO `PERSONS_TBL` (`ID`, `NAME`, `FAM`, `ADDRESS`) VALUES
-(1, 'Boian', 'Katzarsky', 'Ul. 222'),
-(2, 'Velko', 'Iltchev', 'Plovdiv, 4000'),
-(3, 'Ani', 'Dimitrova', 'Plovdiv, 60'),
-(4, 'Bruce', 'Willis', 'Los Angeles, CA');
+(1, 'Sylvester', 'Stallone, 'Chicago'),
+(2, 'Dolf', 'Lundren', 'Louisiana'),
+(3, 'Arnold', 'Schwarzenegger', 'California'),
+(4, 'Bruce', 'Willis', 'California');
 
 CREATE TABLE IF NOT EXISTS `TELS_TBL` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `TELS_TBL` (
 INSERT INTO `TELS_TBL` (`ID`, `PID`, `TID`, `NOMER`) VALUES
 (1, 1, 1, '032 / 123 4560'),
 (2, 1, 2, '0886 103 482'),
-(3, 2, 3, ''),
+(3, 2, 3, '044 / 333 333'),
 (6, 3, 1, '02 / 456 8790');
 
 CREATE TABLE IF NOT EXISTS `TELTYPES_TBL` (
