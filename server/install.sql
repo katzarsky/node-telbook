@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS `PERSONS_TBL` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 INSERT INTO `PERSONS_TBL` (`ID`, `NAME`, `FAM`, `ADDRESS`) VALUES
-(1, 'Sylvester', 'Stallone, 'Chicago'),
-(2, 'Dolf', 'Lundren', 'Louisiana'),
+(1, 'Sylvester', 'Stallone', 'Chicago'),
+(2, 'Jason', 'Statham', 'Louisiana'),
 (3, 'Arnold', 'Schwarzenegger', 'California'),
 (4, 'Bruce', 'Willis', 'California');
 
