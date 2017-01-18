@@ -67,6 +67,12 @@ app.post(['/persons/:person_id', '/persons'], function(request, response) {
 		response.end();
 	}
 	else {
+		if(person_id > 0) {
+			db.query('UPDATE PERSONS_TBL SET NAME=?, FAM=?, ADDRESS=? WHERE ID=?', [person.NAME, person.FAM, person.ADDRESS, person_id], onUpdatePerson);
+		}
+		else {
+			db.query('INSERT INTO PERSONS_TBL SET NAME=?, FAM=?, ADDRESS=?', [person.NAME, person.FAM, person.ADDRESS], onUpdatePerson);
+		}
 		
 		var onUpdatePerson = function(error, results) {
 			if(error) {
@@ -85,13 +91,6 @@ app.post(['/persons/:person_id', '/persons'], function(request, response) {
 				});
 			}
 		};
-		
-		if(person_id > 0) {
-			db.query('UPDATE PERSONS_TBL SET NAME=?, FAM=?, ADDRESS=? WHERE ID=?', [person.NAME, person.FAM, person.ADDRESS, person_id], onUpdatePerson);
-		}
-		else {
-			db.query('INSERT INTO PERSONS_TBL SET NAME=?, FAM=?, ADDRESS=?', [person.NAME, person.FAM, person.ADDRESS], onUpdatePerson);
-		}
 	}
 });
 
@@ -232,7 +231,6 @@ app.post(['/telephones/:telephone_id', '/telephones'], function(request, respons
 
 
 // set-up static files and index.html
-//app.use(express.static('client'));
 app.use(express.static('client'));
 
 // Binding express app to port
