@@ -1,17 +1,21 @@
 var express = require('express');
 var mysql = require('mysql');
-
 var port = 3000;
-var db = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'plovdiv81',
-  database : 'telbook'
-});
-db.connect();
-
+var dbconfig = {
+	connectionLimit : 16,
+	host     : 'localhost',
+	user     : 'root',
+	password : 'plovdiv81',
+	database : 'telbook'
+};
+var db = mysql.createPool(dbconfig);
 var parser = require('body-parser');
 var app = express();
+
+// having server-local-data helps with repeating SQL queries to the DB
+var DATA = {
+	persons: null
+};
 
 // for parsing `application/json` and `application/x-www-form-urlencoded`
 app.use(parser.json()); 
@@ -20,26 +24,34 @@ app.use(parser.urlencoded({ extended: true }));
 // controllers
 app.get('/persons', function(request, response) {
 	var messages = [];
-	db.query('SELECT * FROM PERSONS_TBL ORDER BY NAME', function(error, results) {
-		if(error) {
-			response.status(500);
-			messages.push({ type: 'error', text: 'SQL ERROR: ' + error});
-			response.json({ messages: messages });
-		}
-		else {
-			response.json({ persons: results });
-		}
-		response.end();
-	});
+	if(DATA.persons) { // get from cached persons
+		response.json({ persons: DATA.persons }).end();
+	}
+	else {
+		var query = db.query('SELECT * FROM PERSONS_TBL ORDER BY NAME', function(error, results) {
+			if(error) {
+				response.status(500);
+				messages.push({ type: 'error', text: 'SQL ERROR: ' + error});
+				messages.push({ type: 'error', text: 'SQL: ' + query.sql});
+				response.json({ messages: messages });
+			}
+			else {
+				DATA.persons = results; // feed the cache
+				response.json({ persons: results });
+			}
+			response.end();
+		});
+	}
 });
 
 app.get('/persons/:person_id', function(request, response) {
 	var person_id = request.params.person_id;
 	var messages = [];
-	db.query('SELECT * FROM PERSONS_TBL WHERE ID=?', [person_id], function(error, persons) {
+	var query = db.query('SELECT * FROM PERSONS_TBL WHERE ID=?', [person_id], function(error, persons) {
 		if(error) {
 			response.status(500);
 			messages.push({ type: 'error', text: 'SQL ERROR: ' + error});
+			messages.push({ type: 'error', text: 'SQL: ' + query.sql});
 			response.json({ messages: messages });
 		}
 		else {
@@ -53,7 +65,8 @@ app.post(['/persons/:person_id', '/persons'], function(request, response) {
 	var person_id = parseInt(request.params.person_id);
 	var person = request.body;
 	var messages = [];
-	
+	DATA.persons = null; // clear cache
+
 //	console.log(request.body);
 	
 	if(person.NAME.length < 1) messages.push({type: 'error', text: 'NAME is empty.'});
@@ -78,7 +91,7 @@ app.post(['/persons/:person_id', '/persons'], function(request, response) {
 			else {
 				messages.push({type: 'info', text: 'Person saved.'});
 				if(results.insertId) person_id = results.insertId;
-				db.query('SELECT * FROM PERSONS_TBL WHERE ID = ?', [person_id], function(error, results){
+				db.query('SELECT * FROM PERSONS_TBL WHERE ID = ?', [person_id], function(error, results) {
 					response.json({ person: results[0], messages: messages });
 					response.end();
 				});
@@ -97,13 +110,15 @@ app.post(['/persons/:person_id', '/persons'], function(request, response) {
 app.delete('/persons/:person_id', function(request, response) {
 	var person_id = request.params.person_id;
 	var messages = [];
+	DATA.persons = null;
 	
-	db.query(
+	var query = db.query(
 		"DELETE FROM PERSONS_TBL WHERE ID = ?", 
 		[person_id], 
 		function(error, result) {
 			if(error) {
 				messages.push({type: 'error', text: 'SQL ERROR: ' + error});
+				messages.push({type: 'error', text: 'SQL: ' + query.sql});
 				messages.push({type: 'error', text: 'Person not deleted.'});
 				//response.status(500);
 			}
